@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
             select: { email: true }
         });
 
-        const existingEmails = new Set(existingUsers.map(u => u.email.toLowerCase()));
+        const existingEmails = new Set(existingUsers.map((u: any) => u.email.toLowerCase()));
 
         const toCreate = users.filter((u: any) => {
             if (!u.email || !u.apellido) return false;

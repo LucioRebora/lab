@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
         });
 
         const codes = patients
-            .map(p => p.codigoExterno)
+            .map((p: any) => p.codigoExterno)
             .filter(Boolean);
 
         return NextResponse.json({ codes });

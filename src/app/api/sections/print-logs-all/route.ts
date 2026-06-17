@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
         // Map result IDs by effectively used section
         const groupedBySection = new Map<string, string[]>();
         
-        results.forEach(r => {
+        results.forEach((r: any) => {
             const section = r.section || r.determination.section;
             if (!section) return;
 
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
         });
 
         // Transaction to update all results as assigned AND create logs
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: any) => {
             // Bulk update results as assigned
             await tx.result.updateMany({
                 where: { id: { in: resultIds } },

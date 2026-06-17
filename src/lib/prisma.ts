@@ -128,6 +128,8 @@ function buildFields(selectOrInclude: any, isSelect = true) {
         if (val === true) {
             if (isSelect) {
                 columns[key] = true;
+            } else {
+                withRelations[key] = true;
             }
         } else if (typeof val === 'object' && val !== null) {
             const nested: any = {};
@@ -139,6 +141,33 @@ function buildFields(selectOrInclude: any, isSelect = true) {
                 const fields = buildFields((val as any).include, false);
                 if (fields?.columns) nested.columns = fields.columns;
                 if (fields?.withRelations) nested.with = fields.withRelations;
+            } else {
+                // If it is a relation with query options but without select/include (like take/orderBy)
+                // we should still parse the relation include structure if it is nested under include
+                if (!isSelect) {
+                    // It's part of include but has no nested select/include
+                    // nested object can still hold query options
+                }
+            }
+            if ((val as any).take !== undefined) nested.limit = (val as any).take;
+            if ((val as any).skip !== undefined) nested.offset = (val as any).skip;
+            if ((val as any).orderBy !== undefined) {
+                nested.orderBy = (t: any, { desc, asc }: any) => {
+                    const list: any[] = [];
+                    const handleOrder = (orderObj: any) => {
+                        for (const [k, v] of Object.entries(orderObj)) {
+                            if (t[k]) {
+                                list.push(v === 'desc' ? desc(t[k]) : asc(t[k]));
+                            }
+                        }
+                    };
+                    if (Array.isArray((val as any).orderBy)) {
+                        (val as any).orderBy.forEach(handleOrder);
+                    } else {
+                        handleOrder((val as any).orderBy);
+                    }
+                    return list;
+                };
             }
             withRelations[key] = Object.keys(nested).length > 0 ? nested : true;
         }
@@ -148,6 +177,7 @@ function buildFields(selectOrInclude: any, isSelect = true) {
         withRelations: Object.keys(withRelations).length > 0 ? withRelations : undefined 
     };
 }
+
 
 class PrismaPromise<T> implements PromiseLike<T> {
     private fn: (tx?: any) => Promise<T>;

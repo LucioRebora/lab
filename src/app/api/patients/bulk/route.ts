@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
             select: { codigoExterno: true }
         });
 
-        const existingCodes = new Set(existingPatients.map(p => p.codigoExterno));
+        const existingCodes = new Set(existingPatients.map((p: any) => p.codigoExterno));
 
         const toCreate = patients.filter((p: any) => {
             if (!p.codigoExterno) return false;

@@ -33,11 +33,11 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "No hay registros pendientes", count: 0 });
         }
 
-        const detExtIds = records.map(r => String((r.datos as any).IDDeterminacion || r.codigoExterno));
-        const sectionExtIds = [...new Set(records.map(r => String((r.datos as any).IDSeccion)).filter(id => id && id !== 'null'))];
-        const aspectExtIds = [...new Set(records.map(r => String((r.datos as any).IDAspecto)).filter(id => id && id !== 'null'))];
-        const methodExtIds = [...new Set(records.map(r => String((r.datos as any).IDMetodo)).filter(id => id && id !== 'null'))];
-        const unitExtIds = [...new Set(records.map(r => String((r.datos as any).IDUnidad)).filter(id => id && id !== 'null'))];
+        const detExtIds = records.map((r: any) => String((r.datos as any).IDDeterminacion || r.codigoExterno));
+        const sectionExtIds = [...new Set(records.map((r: any) => String((r.datos as any).IDSeccion)).filter((id: string) => id && id !== 'null'))];
+        const aspectExtIds = [...new Set(records.map((r: any) => String((r.datos as any).IDAspecto)).filter((id: string) => id && id !== 'null'))];
+        const methodExtIds = [...new Set(records.map((r: any) => String((r.datos as any).IDMetodo)).filter((id: string) => id && id !== 'null'))];
+        const unitExtIds = [...new Set(records.map((r: any) => String((r.datos as any).IDUnidad)).filter((id: string) => id && id !== 'null'))];
 
         const [existingDets, sections, aspects, methods, units] = await Promise.all([
             prisma.determination.findMany({ where: { codigoExterno: { in: detExtIds }, laboratoryId }, select: { id: true, codigoExterno: true } }),
@@ -47,11 +47,11 @@ export async function POST(req: NextRequest) {
             prisma.unit.findMany({ where: { codigoExterno: { in: unitExtIds }, laboratoryId }, select: { id: true, codigoExterno: true } }),
         ]);
 
-        const detMap = new Map(existingDets.map(d => [d.codigoExterno, d.id] as [string, string]));
-        const sectionMap = new Map(sections.map(s => [s.codigoExterno, s.id] as [string, string]));
-        const aspectMap = new Map(aspects.map(a => [a.codigoExterno, a.id] as [string, string]));
-        const methodMapping = new Map(methods.map(m => [m.codigoExterno, m.id] as [string, string]));
-        const unitMap = new Map(units.map(u => [u.codigoExterno, u.id] as [string, string]));
+        const detMap = new Map(existingDets.map((d: any) => [d.codigoExterno, d.id] as [string, string]));
+        const sectionMap = new Map(sections.map((s: any) => [s.codigoExterno, s.id] as [string, string]));
+        const aspectMap = new Map(aspects.map((a: any) => [a.codigoExterno, a.id] as [string, string]));
+        const methodMapping = new Map(methods.map((m: any) => [m.codigoExterno, m.id] as [string, string]));
+        const unitMap = new Map(units.map((u: any) => [u.codigoExterno, u.id] as [string, string]));
 
 
         let processedCount = 0, createdCount = 0, updatedCount = 0, skippedCount = 0;

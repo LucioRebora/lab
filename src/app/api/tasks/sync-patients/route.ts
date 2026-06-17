@@ -33,16 +33,16 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "No hay registros pendientes", count: 0 });
         }
 
-        const userExtIds = [...new Set(records.map(r => String((r.datos as any).IDUsuario)).filter(id => id !== 'null' && id !== 'undefined'))];
-        const patExtIds = records.map(r => String((r.datos as any).IDPaciente || r.codigoExterno));
+        const userExtIds = [...new Set(records.map((r: any) => String((r.datos as any).IDUsuario)).filter((id: string) => id !== 'null' && id !== 'undefined'))];
+        const patExtIds = records.map((r: any) => String((r.datos as any).IDPaciente || r.codigoExterno));
 
         const [users, existingPats] = await Promise.all([
             prisma.notifiedUser.findMany({ where: { codigoExterno: { in: userExtIds }, laboratoryId }, select: { id: true, codigoExterno: true } }),
             prisma.patient.findMany({ where: { codigoExterno: { in: patExtIds }, laboratoryId }, select: { id: true, codigoExterno: true, documento: true } }),
         ]);
 
-        const userMap = new Map(users.map(u => [u.codigoExterno, u.id]));
-        const existingMap = new Map(existingPats.map(e => [e.codigoExterno, e]));
+        const userMap = new Map(users.map((u: any) => [u.codigoExterno, u.id]));
+        const existingMap = new Map(existingPats.map((e: any) => [e.codigoExterno, e]));
 
         let processedCount = 0, createdCount = 0, updatedCount = 0, skippedCount = 0;
         const processedIds: string[] = [];
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
                 }
 
                 const data = { ...baseData, edad: age };
-                const existingPat = existingMap.get(codigoExt);
+                const existingPat = existingMap.get(codigoExt) as any;
 
                 if (existingPat) {
                     if (updateExisting) {

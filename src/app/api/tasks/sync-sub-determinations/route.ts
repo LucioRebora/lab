@@ -34,9 +34,9 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "No hay registros pendientes", count: 0 });
         }
 
-        const detExtIds = [...new Set(records.map(r => String((r.datos as any).IDDeterminacion)).filter(id => id && id !== 'null'))];
-        const unitExtIds = [...new Set(records.map(r => String((r.datos as any).IDUnidad)).filter(id => id && id !== 'null'))];
-        const subDetExtIds = records.map(r => String((r.datos as any).IDSubDeterminacion || r.codigoExterno));
+        const detExtIds = [...new Set(records.map((r: any) => String((r.datos as any).IDDeterminacion)).filter((id: string) => id && id !== 'null'))];
+        const unitExtIds = [...new Set(records.map((r: any) => String((r.datos as any).IDUnidad)).filter((id: string) => id && id !== 'null'))];
+        const subDetExtIds = records.map((r: any) => String((r.datos as any).IDSubDeterminacion || r.codigoExterno));
 
         const [determinations, units, existingSubDets] = await Promise.all([
             prisma.determination.findMany({ where: { codigoExterno: { in: detExtIds }, laboratoryId }, select: { id: true, codigoExterno: true } }),
@@ -44,11 +44,11 @@ export async function POST(req: NextRequest) {
             prisma.subDetermination.findMany({ where: { codigoExterno: { in: subDetExtIds }, laboratoryId }, select: { id: true, codigoExterno: true, determinationId: true } }),
         ]);
 
-        const detMap = new Map(determinations.map(d => [d.codigoExterno, d.id] as [string, string]));
-        const unitMap = new Map(units.map(u => [u.codigoExterno, u.id] as [string, string]));
+        const detMap = new Map(determinations.map((d: any) => [d.codigoExterno, d.id] as [string, string]));
+        const unitMap = new Map(units.map((u: any) => [u.codigoExterno, u.id] as [string, string]));
         
         // Multi-key map for existing subdeterminations (codigoExterno + determinationId for safety, as per schema unique)
-        const existingMap = new Map(existingSubDets.map(esd => [`${esd.codigoExterno}-${esd.determinationId}`, esd.id]));
+        const existingMap = new Map(existingSubDets.map((esd: any) => [`${esd.codigoExterno}-${esd.determinationId}`, esd.id]));
 
         let processedCount = 0, createdCount = 0, updatedCount = 0, skippedCount = 0;
         const processedIds: string[] = [];
@@ -64,11 +64,11 @@ export async function POST(req: NextRequest) {
                 }
 
                 // Map format
-                let format: StringFormatType = StringFormatType.TEXT;
+                let format: StringFormatType = 'TEXT';
                 const f = String(d.Formato);
-                if (f === "1" || f === "INTEGER") format = StringFormatType.INTEGER;
-                else if (f === "2" || f === "DECIMAL_1") format = StringFormatType.DECIMAL_1;
-                else if (f === "3" || f === "DECIMAL_2") format = StringFormatType.DECIMAL_2;
+                if (f === "1" || f === "INTEGER") format = 'INTEGER';
+                else if (f === "2" || f === "DECIMAL_1") format = 'DECIMAL_1';
+                else if (f === "3" || f === "DECIMAL_2") format = 'DECIMAL_2';
 
                 const data: any = {
                     codigoExterno: codigoExt,

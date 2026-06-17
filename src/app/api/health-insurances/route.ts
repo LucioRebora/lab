@@ -36,7 +36,7 @@ export async function GET(request: Request) {
             });
 
             if (setting && setting.value.trim()) {
-                allowedIds = setting.value.split(',').map(id => id.trim());
+                allowedIds = setting.value.split(',').map((id: string) => id.trim());
             }
         }
 

@@ -37,14 +37,14 @@ export async function POST(req: NextRequest) {
         }
 
         // Prep lookups for all records at once
-        const patientExtIds = [...new Set(allRecords.map(r => String((r.datos as any).IDPaciente)))];
-        const doctorExtIds = [...new Set(allRecords.map(r => String((r.datos as any).IDDoctor)).filter(id => id !== 'null' && id !== 'undefined'))];
-        const bioExtIds = [...new Set(allRecords.map(r => String((r.datos as any).IDBioquimicoFirmante)).filter(id => id !== 'null' && id !== 'undefined'))];
+        const patientExtIds = [...new Set(allRecords.map((r: any) => String((r.datos as any).IDPaciente)))];
+        const doctorExtIds = [...new Set(allRecords.map((r: any) => String((r.datos as any).IDDoctor)).filter((id: string) => id !== 'null' && id !== 'undefined'))];
+        const bioExtIds = [...new Set(allRecords.map((r: any) => String((r.datos as any).IDBioquimicoFirmante)).filter((id: string) => id !== 'null' && id !== 'undefined'))];
         const userExtIds = [...new Set([
-            ...allRecords.map(r => String((r.datos as any).IDUsuarioPublicado)).filter(id => id !== 'null'),
-            ...allRecords.map(r => String((r.datos as any).IDUsuarioPortadaPublicado)).filter(id => id !== 'null')
+            ...allRecords.map((r: any) => String((r.datos as any).IDUsuarioPublicado)).filter((id: string) => id !== 'null'),
+            ...allRecords.map((r: any) => String((r.datos as any).IDUsuarioPortadaPublicado)).filter((id: string) => id !== 'null')
         ])];
-        const protExtIds = allRecords.map(r => String((r.datos as any).IDProtocolo || r.codigoExterno));
+        const protExtIds = allRecords.map((r: any) => String((r.datos as any).IDProtocolo || r.codigoExterno));
 
         const [patients, doctors, biochemists, users, existingProts] = await Promise.all([
             prisma.patient.findMany({ where: { codigoExterno: { in: patientExtIds }, laboratoryId }, select: { id: true, codigoExterno: true } }),
@@ -54,11 +54,11 @@ export async function POST(req: NextRequest) {
             prisma.protocol.findMany({ where: { codigoExterno: { in: protExtIds }, laboratoryId }, select: { id: true, codigoExterno: true } }),
         ]);
 
-        const patMap = new Map(patients.map(p => [p.codigoExterno, p.id]));
-        const docMap = new Map(doctors.map(d => [d.codigoExterno, d.id]));
-        const bioMap = new Map(biochemists.map(b => [b.codigoExterno, b.id]));
-        const userMap = new Map(users.map(u => [u.codigoExterno, u.id]));
-        const existingMap = new Map(existingProts.map(e => [e.codigoExterno, e.id]));
+        const patMap = new Map(patients.map((p: any) => [p.codigoExterno, p.id]));
+        const docMap = new Map(doctors.map((d: any) => [d.codigoExterno, d.id]));
+        const bioMap = new Map(biochemists.map((b: any) => [b.codigoExterno, b.id]));
+        const userMap = new Map(users.map((u: any) => [u.codigoExterno, u.id]));
+        const existingMap = new Map(existingProts.map((e: any) => [e.codigoExterno, e.id]));
 
         let totalCreated = 0, totalUpdated = 0, totalSkipped = 0, totalErrors = 0;
 
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 
             for (let j = 0; j < lot.length; j += CONCURRENCY) {
                 const subChunk = lot.slice(j, j + CONCURRENCY);
-                await Promise.all(subChunk.map(async (record) => {
+                await Promise.all(subChunk.map(async (record: any) => {
                     try {
                         const d = record.datos as any;
                         const codigoExt = String(d.IDProtocolo || record.codigoExterno);

@@ -33,10 +33,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "No hay registros pendientes", count: 0 });
         }
 
-        const protocolExtIds = [...new Set(externalRecords.map(r => String((r.datos as any).IDProtocolo)))];
-        const additionalExtIds = [...new Set(externalRecords.map(r => String((r.datos as any).IDAdicional)))];
-        const osExtIds = [...new Set(externalRecords.map(r => String((r.datos as any).IDObraSocial)).filter(id => id !== 'null'))];
-        const addExtIds = externalRecords.map(r => String((r.datos as any).IDAdicionalAplicado || r.codigoExterno));
+        const protocolExtIds = [...new Set(externalRecords.map((r: any) => String((r.datos as any).IDProtocolo)))];
+        const additionalExtIds = [...new Set(externalRecords.map((r: any) => String((r.datos as any).IDAdicional)))];
+        const osExtIds = [...new Set(externalRecords.map((r: any) => String((r.datos as any).IDObraSocial)).filter((id: string) => id !== 'null'))];
+        const addExtIds = externalRecords.map((r: any) => String((r.datos as any).IDAdicionalAplicado || r.codigoExterno));
 
         const [protocols, additionals, hInsurances, existingApps] = await Promise.all([
             prisma.protocol.findMany({ where: { codigoExterno: { in: protocolExtIds }, laboratoryId }, select: { id: true, codigoExterno: true } }),
@@ -45,10 +45,10 @@ export async function POST(req: NextRequest) {
             prisma.additionalApplyed.findMany({ where: { codigoExterno: { in: addExtIds } }, select: { id: true, codigoExterno: true } }),
         ]);
 
-        const protMap = new Map(protocols.map(p => [p.codigoExterno, p.id]));
-        const addMap = new Map(additionals.map(a => [a.codigoExterno, a.id]));
-        const osMap = new Map(hInsurances.map(os => [os.codigoExterno, os.id]));
-        const existingMap = new Map(existingApps.map(e => [e.codigoExterno, e.id]));
+        const protMap = new Map(protocols.map((p: any) => [p.codigoExterno, p.id]));
+        const addMap = new Map(additionals.map((a: any) => [a.codigoExterno, a.id]));
+        const osMap = new Map(hInsurances.map((os: any) => [os.codigoExterno, os.id]));
+        const existingMap = new Map(existingApps.map((e: any) => [e.codigoExterno, e.id]));
 
         let processedCount = 0, createdCount = 0, updatedCount = 0, skippedCount = 0;
         const processedIds: string[] = [];

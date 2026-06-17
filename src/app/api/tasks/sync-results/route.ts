@@ -36,11 +36,11 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "No hay registros pendientes", count: 0 });
         }
 
-        const protocolExtIds = [...new Set(allRecords.map(r => String((r.datos as any).IDProtocolo)))];
-        const determinationExtIds = [...new Set(allRecords.map(r => String((r.datos as any).IDDeterminacion)))];
-        const sectionExtIds = [...new Set(allRecords.map(r => String((r.datos as any).IDSeccion)).filter(id => id !== 'null'))];
-        const osExtIds = [...new Set(allRecords.map(r => String((r.datos as any).IDObraSocial)).filter(id => id !== 'null'))];
-        const resExtIds = allRecords.map(r => String((r.datos as any).IDRenglonOS || (r.datos as any).IDResultado || r.codigoExterno));
+        const protocolExtIds = [...new Set(allRecords.map((r: any) => String((r.datos as any).IDProtocolo)))];
+        const determinationExtIds = [...new Set(allRecords.map((r: any) => String((r.datos as any).IDDeterminacion)))];
+        const sectionExtIds = [...new Set(allRecords.map((r: any) => String((r.datos as any).IDSeccion)).filter((id: string) => id !== 'null'))];
+        const osExtIds = [...new Set(allRecords.map((r: any) => String((r.datos as any).IDObraSocial)).filter((id: string) => id !== 'null'))];
+        const resExtIds = allRecords.map((r: any) => String((r.datos as any).IDRenglonOS || (r.datos as any).IDResultado || r.codigoExterno));
 
         const [protocols, determinations, sections, hInsurances, existingResults] = await Promise.all([
             prisma.protocol.findMany({ where: { codigoExterno: { in: protocolExtIds }, laboratoryId }, select: { id: true, codigoExterno: true } }),
@@ -50,11 +50,11 @@ export async function POST(req: NextRequest) {
             prisma.result.findMany({ where: { codigoExterno: { in: resExtIds } }, select: { id: true, codigoExterno: true } }),
         ]);
 
-        const protocolMap = new Map(protocols.map(p => [p.codigoExterno, p.id]));
-        const detMap = new Map(determinations.map(d => [d.codigoExterno, d.id]));
-        const sectionMap = new Map(sections.map(s => [s.codigoExterno, s.id]));
-        const osMap = new Map(hInsurances.map(os => [os.codigoExterno, os.id]));
-        const existingMap = new Map(existingResults.map(er => [er.codigoExterno, er.id]));
+        const protocolMap = new Map(protocols.map((p: any) => [p.codigoExterno, p.id]));
+        const detMap = new Map(determinations.map((d: any) => [d.codigoExterno, d.id]));
+        const sectionMap = new Map(sections.map((s: any) => [s.codigoExterno, s.id]));
+        const osMap = new Map(hInsurances.map((os: any) => [os.codigoExterno, os.id]));
+        const existingMap = new Map(existingResults.map((er: any) => [er.codigoExterno, er.id]));
 
         let totalCreated = 0, totalUpdated = 0, totalSkipped = 0, totalErrors = 0;
 
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
                     const existingId = existingMap.get(codigoExt);
                     if (existingId) {
                         if (updateExisting) {
-                            toUpdateList.push({ id: existingId, data: resultData, recordId: record.id });
+                            toUpdateList.push({ id: existingId as string, data: resultData, recordId: record.id });
                         } else {
                             totalSkipped++;
                             processedInThisLot.push(record.id);
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
 
             // Commit insertions
             if (toCreateData.length > 0) {
-                const prismaInsertData = toCreateData.map(({ recordId, ...rest }) => rest);
+                const prismaInsertData = toCreateData.map(({ recordId, ...rest }: any) => rest);
                 await prisma.result.createMany({ data: prismaInsertData, skipDuplicates: true });
                 toCreateData.forEach(item => processedInThisLot.push(item.recordId));
                 totalCreated += toCreateData.length;
@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
                 const CONCURRENCY = 75;
                 for (let j = 0; j < toUpdateList.length; j += CONCURRENCY) {
                     const subChunk = toUpdateList.slice(j, j + CONCURRENCY);
-                    await Promise.all(subChunk.map(async (item) => {
+                    await Promise.all(subChunk.map(async (item: any) => {
                         try {
                             await prisma.result.update({ where: { id: item.id }, data: { ...item.data, updatedAt: new Date() } });
                             processedInThisLot.push(item.recordId);

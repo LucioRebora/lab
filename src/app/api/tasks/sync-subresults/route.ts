@@ -37,9 +37,9 @@ export async function POST(req: NextRequest) {
         }
 
         // Fetching common dependencies in advance for the whole set to minimize queries
-        const idResultadoExts = [...new Set(allRecords.map(r => String((r.datos as any).idResultado ?? (r.datos as any).IDResultado)))];
-        const idSubDetExts = [...new Set(allRecords.map(r => String((r.datos as any).idSubDeterminacion ?? (r.datos as any).IDSubDeterminacion)))];
-        const resExtIds = allRecords.map(r => String((r.datos as any).idSubResultado ?? (r.datos as any).IDSubResultado ?? r.codigoExterno));
+        const idResultadoExts = [...new Set(allRecords.map((r: any) => String((r.datos as any).idResultado ?? (r.datos as any).IDResultado)))];
+        const idSubDetExts = [...new Set(allRecords.map((r: any) => String((r.datos as any).idSubDeterminacion ?? (r.datos as any).IDSubDeterminacion)))];
+        const resExtIds = allRecords.map((r: any) => String((r.datos as any).idSubResultado ?? (r.datos as any).IDSubResultado ?? r.codigoExterno));
 
         const [results, subDeterminations, existingSubResults] = await Promise.all([
             prisma.result.findMany({ where: { codigoExterno: { in: idResultadoExts }, laboratoryId }, select: { id: true, codigoExterno: true } }),
@@ -47,9 +47,9 @@ export async function POST(req: NextRequest) {
             prisma.subResult.findMany({ where: { codigoExterno: { in: resExtIds } }, select: { id: true, codigoExterno: true } })
         ]);
 
-        const resultMap = new Map(results.map(r => [r.codigoExterno, r.id]));
-        const subDetMap = new Map(subDeterminations.map(sd => [sd.codigoExterno, sd.id]));
-        const existingMap = new Map(existingSubResults.map(esr => [esr.codigoExterno, esr.id]));
+        const resultMap = new Map(results.map((r: any) => [r.codigoExterno, r.id]));
+        const subDetMap = new Map(subDeterminations.map((sd: any) => [sd.codigoExterno, sd.id]));
+        const existingMap = new Map(existingSubResults.map((esr: any) => [esr.codigoExterno, esr.id]));
 
         let totalCreated = 0, totalUpdated = 0, totalSkipped = 0, totalErrors = 0;
 
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
                     const existingId = existingMap.get(codigoExt);
                     if (existingId) {
                         if (updateExisting) {
-                            toUpdateList.push({ id: existingId, data: subResultData, recordId: record.id });
+                            toUpdateList.push({ id: existingId as string, data: subResultData, recordId: record.id });
                         } else {
                             totalSkipped++;
                             processedInThisLot.push(record.id);
@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
 
             // Execute "Commit" for current lot (Insertions)
             if (toCreateData.length > 0) {
-                const prismaInsertData = toCreateData.map(({ recordId, ...rest }) => rest);
+                const prismaInsertData = toCreateData.map(({ recordId, ...rest }: any) => rest);
                 await prisma.subResult.createMany({ data: prismaInsertData, skipDuplicates: true });
                 toCreateData.forEach(item => processedInThisLot.push(item.recordId));
                 totalCreated += toCreateData.length;
@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
                 const CONCURRENCY = 75;
                 for (let j = 0; j < toUpdateList.length; j += CONCURRENCY) {
                     const subChunk = toUpdateList.slice(j, j + CONCURRENCY);
-                    await Promise.all(subChunk.map(async (item) => {
+                    await Promise.all(subChunk.map(async (item: any) => {
                         try {
                             await prisma.subResult.update({ where: { id: item.id }, data: { ...item.data, updatedAt: new Date() } });
                             processedInThisLot.push(item.recordId);

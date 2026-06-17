@@ -45,7 +45,7 @@ export async function POST(request: NextRequest, props: { params: Promise<{ id: 
             return NextResponse.json({ error: "Invalid result IDs" }, { status: 400 });
         }
 
-        const log = await prisma.$transaction(async (tx) => {
+        const log = await prisma.$transaction(async (tx: any) => {
             // Update results as assigned
             await tx.result.updateMany({
                 where: { id: { in: data.resultIds } },

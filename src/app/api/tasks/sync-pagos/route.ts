@@ -33,16 +33,16 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "No hay registros pendientes", count: 0 });
         }
 
-        const patientExtIds = [...new Set(externalRecords.map(r => String((r.datos as any).IDPaciente)))];
-        const payExtIds = externalRecords.map(r => String((r.datos as any).IDPago || r.codigoExterno));
+        const patientExtIds = [...new Set(externalRecords.map((r: any) => String((r.datos as any).IDPaciente)))];
+        const payExtIds = externalRecords.map((r: any) => String((r.datos as any).IDPago || r.codigoExterno));
 
         const [patients, existingPays] = await Promise.all([
             prisma.patient.findMany({ where: { codigoExterno: { in: patientExtIds }, laboratoryId }, select: { id: true, codigoExterno: true } }),
             prisma.payment.findMany({ where: { codigoExterno: { in: payExtIds } }, select: { id: true, codigoExterno: true } }),
         ]);
 
-        const patMap = new Map(patients.map(p => [p.codigoExterno, p.id]));
-        const existingMap = new Map(existingPays.map(e => [e.codigoExterno, e.id]));
+        const patMap = new Map(patients.map((p: any) => [p.codigoExterno, p.id]));
+        const existingMap = new Map(existingPays.map((e: any) => [e.codigoExterno, e.id]));
 
         let processedCount = 0, createdCount = 0, updatedCount = 0, skippedCount = 0;
         const processedIds: string[] = [];

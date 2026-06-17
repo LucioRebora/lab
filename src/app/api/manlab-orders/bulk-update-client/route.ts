@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Use a transaction to ensure both export log and order updates are consistent
-        const result = await prisma.$transaction(async (tx) => {
+        const result = await prisma.$transaction(async (tx: any) => {
             // 1. Create the Export Log with an explicit list of resultIds
             const manlabExport = await tx.manlabExport.create({
                 data: {

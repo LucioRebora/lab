@@ -33,13 +33,13 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "No hay registros pendientes", count: 0 });
         }
 
-        const emails = records.map(r => (r.datos as any).Email || `${(r.datos as any).IDUsuario || r.codigoExterno}@bioitia.com`);
+        const emails = records.map((r: any) => (r.datos as any).Email || `${(r.datos as any).IDUsuario || r.codigoExterno}@bioitia.com`);
         const existingUsers = await prisma.notifiedUser.findMany({
             where: { email: { in: emails }, laboratoryId },
             select: { id: true, email: true }
         });
 
-        const existingMap = new Map(existingUsers.map(u => [u.email, u.id]));
+        const existingMap = new Map(existingUsers.map((u: any) => [u.email, u.id]));
 
         let processedCount = 0, createdCount = 0, updatedCount = 0, skippedCount = 0;
         const processedIds: string[] = [];

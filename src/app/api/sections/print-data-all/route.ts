@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
         // Group by effective section
         const sectionMap = new Map<string, any>();
         
-        results.forEach(r => {
+        results.forEach((r: any) => {
             const section = r.section || r.determination?.section;
             if (!section) return;
 

@@ -216,7 +216,7 @@ export const currentAccountRelations = relations(currentAccount, ({one}) => ({
 
 export const patientRelations = relations(patient, ({one, many}) => ({
 	currentAccounts: many(currentAccount),
-	patientHealthInsurances: many(patientHealthInsurance),
+	healthInsurances: many(patientHealthInsurance),
 	payments: many(payment),
 	laboratory: one(laboratory, {
 		fields: [patient.laboratoryId],
