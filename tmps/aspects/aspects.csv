@@ -1,5 +1,0 @@
-codigoExterno,Nombre,Descripcion,Memorable
-1,AS1,"Segunda columna, tipo hemograma.",
-2,AS2,"VR abajo, tipo T3 - T4 - TSH.",
-3,AS3,"Gran resultado, tipo informe de cultivo.","Por modificación del 21/8/99, se omiten siempre los VR para este aspecto. Si se quieren reincorporar, amontonar para que no quede tanto espacio entre SubResultado y SubResultado."
-4,AS4,"Espacio adicional, tipo proteinograma.",

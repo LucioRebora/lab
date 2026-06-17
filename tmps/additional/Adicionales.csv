@@ -1,5 +1,0 @@
-IDAdicional,Nombre,Abreviatura,Codigo,AgregarSiempre,AgregarEnUrgencia
-1,Acto bioquimico Internacion,AB,1001,1,0
-2,Domicilio,DOMICILIO,,0,0
-3,Urgencia,URGENCIA,1200,0,1
-4,Colector Orina Esteril,Frasco Uro,264,0,0
