@@ -1,0 +1,886 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String      @id @default(cuid())
+  email        String      @unique
+  password     String
+  name         String?
+  role         String      @default("USER")
+  active       Boolean     @default(true)
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  laboratoryId String?     @map("laboratory_id")
+  image        String?
+  telefono     String?
+  laboratory   Laboratory? @relation(fields: [laboratoryId], references: [id])
+  protocolNotes ProtocolNote[]
+  printLogs WorksheetPrintLog[]
+
+  @@map("LAB_user")
+}
+
+model Budget {
+  id                String           @id @default(cuid())
+  paciente          String?
+  total             Float
+  healthInsuranceId String?          @map("health_insurance_id")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+  email             String?
+  telefono          String?
+  sentAt            DateTime?        @map("sent_at")
+  laboratoryId      String?          @map("laboratory_id")
+  laboratory        Laboratory?      @relation(fields: [laboratoryId], references: [id])
+  healthInsurance   HealthInsurance? @relation(fields: [healthInsuranceId], references: [id])
+  items             BudgetItem[]
+
+  @@map("LAB_budget")
+}
+
+model BudgetItem {
+  id                    String          @id @default(cuid())
+  budgetId              String          @map("budget_id")
+  determinationId       String?         @map("determination_id")
+  additionalId          String?         @map("additional_id")
+  codigo                Int?
+  nombre                String
+  ub                    Float?
+  valor                 Float
+  healthInsuranceId     String          @map("health_insurance_id")
+  healthInsuranceNombre String          @map("health_insurance_nombre")
+  budget                Budget          @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  healthInsurance       HealthInsurance @relation(fields: [healthInsuranceId], references: [id])
+  determination         Determination?  @relation(fields: [determinationId], references: [id])
+  additional            Additional?     @relation(fields: [additionalId], references: [id])
+
+  @@map("LAB_budget_item")
+}
+
+model Laboratory {
+  id                        String                     @id @default(cuid())
+  nombre                    String
+  email                     String?
+  direccion                 String?
+  codigoPostal              String?                    @map("codigo_postal")
+  ciudad                    String?
+  provincia                 String?
+  pais                      String?
+  telefono                  String?
+  sitioWeb                  String?                    @map("sitio_web")
+  createdAt                 DateTime                   @default(now()) @map("created_at")
+  updatedAt                 DateTime                   @updatedAt @map("updated_at")
+  logo                      String?
+  abbreviations             Abbreviation[]
+  additionals               Additional[]
+  additionalApplyeds        AdditionalApplyed[]
+  aspects                   Aspect[]
+  auditLogs                 AuditLog[]
+  biochemists               Biochemist[]
+  budgets                   Budget[]
+  covers                    Cover[]
+  determinations            Determination[]
+  doctors                   Doctor[]
+  healthInsurances          HealthInsurance[]
+  methods                   Method[]
+  patients                  Patient[]
+  protocols                 Protocol[]
+  notifiedUsers             NotifiedUser[]
+  results                   Result[]
+  sections                  Section[]
+  settings                  Setting[]
+  subDeterminations         SubDetermination[]
+  units                     Unit[]
+  users                     User[]
+  equipments                Equipment[] @relation("LAB_EquipmentToLaboratory")
+  referenceValues           ReferenceValue[]
+  subResults                SubResult[]
+  additionalPricesOSConfigs AdditionalPricesOSConfig[]
+  pricesOSConfigs           PricesOSConfig[]
+  payments                  Payment[]
+  currentAccounts           CurrentAccount[]
+  calculatorSteps           CalculatorStep[]
+  mapperCM260s              MapperCM260[]
+  equipmentConfigs          EquipmentConfig[]
+  externalRecords           ExternalRecord[]
+  protocolNotes             ProtocolNote[]
+  tags                      Tag[]
+  worksheets                Worksheet[]
+
+  @@map("LAB_laboratory")
+}
+
+model AuditLog {
+  id           String      @id @default(cuid())
+  userId       String?     @map("user_id")
+  userName     String?     @map("user_name")
+  action       String
+  entity       String?
+  entityId     String?     @map("entity_id")
+  details      String?
+  metadata     Json?
+  createdAt    DateTime    @default(now()) @map("created_at")
+  laboratoryId String?     @map("laboratory_id")
+  laboratory   Laboratory? @relation(fields: [laboratoryId], references: [id])
+
+  @@index([entityId, entity])
+  @@index([createdAt])
+  @@map("LAB_audit_log")
+}
+
+model Setting {
+  id           String     @id @default(cuid())
+  key          String
+  value        String
+  description  String?
+  laboratoryId String     @map("laboratory_id")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  laboratory   Laboratory @relation(fields: [laboratoryId], references: [id])
+
+  @@unique([key, laboratoryId])
+  @@map("LAB_setting")
+}
+
+model Patient {
+  id               String                   @id @default(cuid())
+  apellido         String
+  nombre           String
+  sexo             String
+  tipoDocumento    String                   @map("tipo_documento")
+  documento        String?
+  fechaNacimiento  DateTime?                @map("fecha_nacimiento")
+  edad             Int?
+  email            String?
+  laboratoryId     String?                  @map("laboratory_id")
+  createdAt        DateTime                 @default(now()) @map("created_at")
+  updatedAt        DateTime                 @updatedAt @map("updated_at")
+  telefono         String?
+  direccion        String?
+  ciudad           String?
+  codigoPostal     String?                  @map("codigo_postal")
+  entreCalles      String?                  @map("entre_calles")
+  provincia        String?
+  codigoExterno    String?                  @unique @map("codigo_externo")
+  claveInforme     String?                  @map("clave_informe")
+  notifiedUserId   String?                  @map("notified_user_id")
+  laboratory       Laboratory?              @relation(fields: [laboratoryId], references: [id])
+  notifiedUser     NotifiedUser?            @relation(fields: [notifiedUserId], references: [id])
+  healthInsurances PatientHealthInsurance[]
+  protocols        Protocol[]
+  payments         Payment[]
+  currentAccounts  CurrentAccount[]
+
+  @@index([laboratoryId, apellido, nombre])
+  @@index([documento])
+  @@map("LAB_patient")
+}
+
+model HealthInsurance {
+  id                        String                     @id @default(cuid())
+  nombre                    String
+  contado                   Boolean                    @default(false)
+  cortada                   Boolean                    @default(false)
+  laboratoryId              String?                    @map("laboratory_id")
+  createdAt                 DateTime                   @default(now()) @map("created_at")
+  updatedAt                 DateTime                   @updatedAt @map("updated_at")
+  codigoExterno             String?                    @unique @map("codigo_externo")
+  selectorRTR               Int?                       @default(0) @map("selector_rtr")
+  valorNBU                  Float?                     @default(0) @map("valor_nbu")
+  laboratory                Laboratory?                @relation(fields: [laboratoryId], references: [id])
+  patients                  PatientHealthInsurance[]
+  results                   Result[]
+  additionalApplyeds        AdditionalApplyed[]
+  additionalPricesOSConfigs AdditionalPricesOSConfig[]
+  pricesOSConfigs           PricesOSConfig[]
+  budgets                   Budget[]
+  budgetItems               BudgetItem[]
+
+  @@unique([nombre, laboratoryId])
+  @@map("LAB_health_insurance")
+}
+
+model PatientHealthInsurance {
+  id                String          @id @default(cuid())
+  patientId         String          @map("patient_id")
+  healthInsuranceId String          @map("health_insurance_id")
+  nroAfiliado       String?         @map("nro_afiliado")
+  isDefault         Boolean         @default(false) @map("is_default")
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+  codigoExterno     String?         @unique @map("codigo_externo")
+  healthInsurance   HealthInsurance @relation(fields: [healthInsuranceId], references: [id], onDelete: Cascade)
+  patient           Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@unique([patientId, healthInsuranceId])
+  @@map("LAB_patient_health_insurance")
+}
+
+model Biochemist {
+  id            String      @id @default(cuid())
+  apellido      String
+  nombre        String
+  tratamiento   String?
+  codigo        String?
+  direccion     String?
+  ciudad        String?
+  provincia     String?
+  codigoPostal  String?     @map("codigo_postal")
+  telefono      String?
+  celular       String?
+  notas         String?
+  firmante      Boolean     @default(false)
+  laboratoryId  String?     @map("laboratory_id")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  email         String?
+  codigoExterno String?     @map("codigo_externo")
+  laboratory    Laboratory? @relation(fields: [laboratoryId], references: [id])
+  protocols     Protocol[]
+
+  @@map("LAB_biochemist")
+}
+
+model Cover {
+  id           String      @id @default(cuid())
+  nombre       String
+  abreviatura  String?
+  direccion    String?
+  ciudad       String?
+  provincia    String?
+  codigoPostal String?     @map("codigo_postal")
+  telefono     String?
+  fax          String?
+  celular      String?
+  email        String?
+  comentario1  String?
+  comentario2  String?
+  comentario3  String?
+  comentario4  String?
+  comentario5  String?
+  laboratoryId String?     @map("laboratory_id")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  laboratory   Laboratory? @relation(fields: [laboratoryId], references: [id])
+
+  @@map("LAB_cover")
+}
+
+model Doctor {
+  id                  String      @id @default(cuid())
+  apellido            String
+  nombre              String
+  tratamiento         String?
+  matriculaProvincial String?     @map("matricula_provincial")
+  direccion           String?
+  ciudad              String?
+  provincia           String?
+  codigoPostal        String?     @map("codigo_postal")
+  telefono            String?
+  celular             String?
+  notas               String?
+  laboratoryId        String?     @map("laboratory_id")
+  createdAt           DateTime    @default(now()) @map("created_at")
+  updatedAt           DateTime    @updatedAt @map("updated_at")
+  email               String?
+  codigoExterno       String?     @unique @map("codigo_externo")
+  laboratory          Laboratory? @relation(fields: [laboratoryId], references: [id])
+  protocols           Protocol[]
+
+  @@map("LAB_doctor")
+}
+
+model Method {
+  id             String          @id @default(cuid())
+  nombre         String
+  laboratoryId   String?         @map("laboratory_id")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  codigoExterno  String?         @map("codigo_externo")
+  determinations Determination[]
+  laboratory     Laboratory?     @relation(fields: [laboratoryId], references: [id])
+
+  @@unique([nombre, laboratoryId])
+  @@map("LAB_method")
+}
+
+model Unit {
+  id                String             @id @default(cuid())
+  nombre            String
+  laboratoryId      String?            @map("laboratory_id")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  codigoExterno     String?            @map("codigo_externo")
+  determinations    Determination[]
+  subDeterminations SubDetermination[]
+  laboratory        Laboratory?        @relation(fields: [laboratoryId], references: [id])
+
+  @@unique([nombre, codigoExterno, laboratoryId])
+  @@map("LAB_unit")
+}
+
+model Aspect {
+  id             String          @id @default(cuid())
+  nombre         String
+  descripcion    String?
+  codigoExterno  String?         @map("codigo_externo")
+  laboratoryId   String?         @map("laboratory_id")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  laboratory     Laboratory?     @relation(fields: [laboratoryId], references: [id])
+  determinations Determination[]
+
+  @@unique([nombre, laboratoryId])
+  @@map("LAB_aspect")
+}
+
+model Section {
+  id             String          @id @default(cuid())
+  nombre         String
+  hojaTrabajo    String?         @map("hoja_trabajo")
+  etiqueta       String?
+  laboratoryId   String?         @map("laboratory_id")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  codigoExterno  String?         @map("codigo_externo")
+  determinations Determination[]
+  results        Result[]
+  laboratory     Laboratory?     @relation(fields: [laboratoryId], references: [id])
+  tag            Tag?            @relation(fields: [etiqueta, laboratoryId], references: [codigo, laboratoryId])
+  worksheet      Worksheet?      @relation(fields: [hojaTrabajo, laboratoryId], references: [codigo, laboratoryId])
+  printLogs      WorksheetPrintLog[]
+
+  @@unique([nombre, laboratoryId])
+  @@map("LAB_section")
+}
+
+model WorksheetPrintLog {
+  id            String      @id @default(cuid())
+  sectionId     String      @map("section_id")
+  userId        String      @map("user_id")
+  resultIds     String[]    @map("result_ids")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  
+  section       Section     @relation(fields: [sectionId], references: [id])
+  user          User        @relation(fields: [userId], references: [id])
+
+  @@index([sectionId])
+  @@map("LAB_worksheet_print_log")
+}
+
+model Determination {
+  id                 String             @id @default(cuid())
+  nombre             String
+  abreviatura        String?
+  mensajeIngreso     String?            @map("mensaje_ingreso")
+  comentarioFijo     String?            @map("comentario_fijo")
+  aspecto            String?
+  condicionesMuestra String?            @map("condiciones_muestra")
+  imprimirWorksheet  Boolean            @default(true) @map("imprimir_worksheet")
+  resumirWorksheet   Boolean            @default(false) @map("resumir_worksheet")
+  alturaWorksheet    Float?             @map("altura_worksheet")
+  sectionId          String?            @map("section_id")
+  laboratoryId       String?            @map("laboratory_id")
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+  aspectId           String?            @map("aspect_id")
+  codigo             String?
+  codigoExterno      String?            @unique @map("codigo_externo")
+  codManlab          String?            @db.VarChar(6) @map("cod_manlab")
+  methodId           String?            @map("method_id")
+  unitId             String?            @map("unit_id")
+  informarMetodo     Boolean            @default(true) @map("informar_metodo")
+  aspect             Aspect?            @relation(fields: [aspectId], references: [id])
+  laboratory         Laboratory?        @relation(fields: [laboratoryId], references: [id])
+  method             Method?            @relation(fields: [methodId], references: [id])
+  section            Section?           @relation(fields: [sectionId], references: [id])
+  unit               Unit?              @relation(fields: [unitId], references: [id])
+  subDeterminations  SubDetermination[]
+  results            Result[]
+  pricesOSConfigs    PricesOSConfig[]
+  budgetItems        BudgetItem[]
+  imprimirHistorico  Boolean            @default(false) @map("imprimir_historico")
+  activa             Boolean            @default(true)
+
+  @@unique([nombre, codigoExterno, laboratoryId])
+  @@map("LAB_determination")
+}
+
+model SubDetermination {
+  id                   String           @id @default(cuid())
+  nombre               String
+  codigoExterno        String?          @map("codigo_externo")
+  codManlab            String?          @db.VarChar(6) @map("cod_manlab")
+  determinationId      String           @map("determination_id")
+  unitId               String?          @map("unit_id")
+  laboratoryId         String?          @map("laboratory_id")
+  formato              StringFormatType?
+  calcular             Boolean          @default(false)
+  informar             Boolean          @default(true)
+  informar2C           Boolean          @default(false) @map("informar2_c")
+  informarTextoAntes   String?          @map("informar_texto_antes")
+  informarCorteDespues Boolean          @default(false) @map("informar_corte_despues")
+  informarVR           Boolean          @default(true) @map("informar_vr")
+  valorMinimo          String?          @map("valor_minimo")
+  valorMaximo          String?          @map("valor_maximo")
+  createdAt            DateTime         @default(now()) @map("created_at")
+  updatedAt            DateTime         @updatedAt @map("updated_at")
+  determination        Determination    @relation(fields: [determinationId], references: [id], onDelete: Cascade)
+  laboratory           Laboratory?      @relation(fields: [laboratoryId], references: [id])
+  unit                 Unit?            @relation(fields: [unitId], references: [id])
+  referenceValues      ReferenceValue[]
+  subResults           SubResult[]
+  calculatorSteps      CalculatorStep[]
+  mapperCM260s         MapperCM260[]
+  activa               Boolean          @default(true)
+
+  @@unique([codigoExterno, determinationId, laboratoryId])
+  @@map("LAB_sub_determination")
+}
+
+model ReferenceValue {
+  id                 String           @id @default(cuid())
+  codigoExterno      String?          @map("codigo_externo")
+  subDeterminationId String           @map("sub_determination_id")
+  categoria          String?
+  valoresNormales    String?          @map("valores_normales")
+  informarUnidades   Boolean          @default(true) @map("informar_unidades")
+  laboratoryId       String?          @map("laboratory_id")
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+  subDetermination   SubDetermination @relation(fields: [subDeterminationId], references: [id], onDelete: Cascade)
+  laboratory         Laboratory?      @relation(fields: [laboratoryId], references: [id])
+
+  @@unique([codigoExterno, subDeterminationId, laboratoryId])
+  @@map("LAB_reference_value")
+}
+
+model Abbreviation {
+  id            String      @id @default(cuid())
+  resultado     String
+  abreviatura   String
+  laboratoryId  String?     @map("laboratory_id")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  codigoExterno String?     @map("codigo_externo")
+  laboratory    Laboratory? @relation(fields: [laboratoryId], references: [id])
+
+  @@unique([resultado, codigoExterno, laboratoryId])
+  @@map("LAB_abbreviation")
+}
+
+model Additional {
+  id                        String                     @id @default(cuid())
+  nombre                    String
+  abreviatura               String?
+  codigo                    String?
+  agregarSiempre            Boolean                    @default(false) @map("agregar_siempre")
+  agregarEnUrgencia         Boolean                    @default(false) @map("agregar_en_urgencia")
+  laboratoryId              String?                    @map("laboratory_id")
+  createdAt                 DateTime                   @default(now()) @map("created_at")
+  updatedAt                 DateTime                   @updatedAt @map("updated_at")
+  laboratory                Laboratory?                @relation(fields: [laboratoryId], references: [id])
+  additionalApplyeds        AdditionalApplyed[]
+  additionalPricesOSConfigs AdditionalPricesOSConfig[]
+  budgetItems               BudgetItem[]
+  codigoExterno             String?                    @unique @map("codigo_externo")
+
+  @@unique([nombre, laboratoryId])
+  @@map("LAB_additional")
+}
+
+model Protocol {
+  id                    String              @id @default(cuid())
+  numeroSecuencial      String              @map("numero_secuencial")
+  patientId             String              @map("patient_id")
+  doctorId              String?             @map("doctor_id")
+  biochemistId          String?             @map("biochemist_id")
+  notifiedUserId        String?             @map("notified_user_id")
+  notifiedUserPortadaId String?             @map("notified_user_portada_id")
+  laboratoryId          String?             @map("laboratory_id")
+  codigoExterno         String?             @unique @map("codigo_externo")
+  status                String              @default("NEW")
+  etiquetaImpresa       Boolean             @default(false) @map("etiqueta_impresa")
+  notaEncabezado        String?             @map("nota_encabezado")
+  notaPie               String?             @map("nota_pie")
+  imprimirPortada       Boolean             @default(false) @map("imprimir_portada")
+  paraRevisar           Boolean             @default(false) @map("para_revisar")
+  completo              Boolean             @default(false)
+  firmado               Boolean             @default(false)
+  paraImprimir          Boolean             @default(false) @map("para_imprimir")
+  paraCrear             Boolean             @default(false) @map("para_crear")
+  impreso               Boolean             @default(false)
+  creado                Boolean             @default(false)
+  publicado             Boolean             @default(false)
+  sena                  Float               @default(0) @map("sena")
+  muestraMRY            String?             @map("muestra_mry")
+  contadorPCD           Boolean             @default(false) @map("contador_pcd")
+  paraPublicar          Boolean             @default(false) @map("para_publicar")
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @updatedAt @map("updated_at")
+  doctor                Doctor?             @relation(fields: [doctorId], references: [id])
+  biochemist            Biochemist?         @relation(fields: [biochemistId], references: [id])
+  notifiedUser          NotifiedUser?       @relation("ProtocolNotifiedUser", fields: [notifiedUserId], references: [id])
+  notifiedUserPortada   NotifiedUser?       @relation("ProtocolNotifiedUserPortada", fields: [notifiedUserPortadaId], references: [id])
+  laboratory            Laboratory?         @relation(fields: [laboratoryId], references: [id])
+  patient               Patient             @relation(fields: [patientId], references: [id])
+  results               Result[]
+  additionalApplyeds    AdditionalApplyed[]
+  notes                 ProtocolNote[]
+
+  @@index([laboratoryId, status])
+  @@index([createdAt])
+  @@unique([numeroSecuencial, laboratoryId])
+  @@map("LAB_protocol")
+}
+
+model NotifiedUser {
+  id               String      @id @default(cuid())
+  email            String
+  apellido         String
+  nombre           String?
+  codigoExterno    String?     @map("codigo_externo")
+  laboratoryId     String?     @map("laboratory_id")
+  clave            String?
+  enviarUnaCopia   Boolean     @default(false) @map("enviar_una_copia")
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+  laboratory       Laboratory? @relation(fields: [laboratoryId], references: [id])
+  patients         Patient[]
+  protocols        Protocol[]  @relation("ProtocolNotifiedUser")
+  protocolsPortada Protocol[]  @relation("ProtocolNotifiedUserPortada")
+
+  @@unique([email, laboratoryId])
+  @@map("LAB_notified_user")
+}
+
+model Result {
+  id                String           @id @default(cuid())
+  codigoExterno     String?          @unique @map("codigo_externo")
+  protocolId        String           @map("protocol_id")
+  determinationId   String           @map("determination_id")
+  sectionId         String?          @map("section_id")
+  healthInsuranceId String?          @map("health_insurance_id")
+  comentarioInterno String?          @map("comentario_interno")
+  asignado          Boolean          @default(false)
+  etiquetaImpresa   Boolean          @default(false) @map("etiqueta_impresa")
+  suspender         Boolean          @default(false)
+  precio            Float            @default(0)
+  debeReceta        Boolean          @default(false) @map("debe_receta")
+  debeOrden         Boolean          @default(false) @map("debe_orden")
+  numAutorizacion   String?          @map("num_autorizacion")
+  laboratoryId      String?          @map("laboratory_id")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+  protocol          Protocol         @relation(fields: [protocolId], references: [id], onDelete: Cascade)
+  determination     Determination    @relation(fields: [determinationId], references: [id], onDelete: Cascade)
+  section           Section?         @relation(fields: [sectionId], references: [id])
+  healthInsurance   HealthInsurance? @relation(fields: [healthInsuranceId], references: [id])
+  laboratory        Laboratory?      @relation(fields: [laboratoryId], references: [id])
+  subResults        SubResult[]
+  manlabOrder       ManlabOrder?
+
+  @@index([protocolId])
+  @@map("LAB_result")
+}
+
+model SubResult {
+  id                 String           @id @default(cuid())
+  codigoExterno      String?          @unique @map("codigo_externo")
+  resultId           String           @map("result_id")
+  subDeterminationId String           @map("sub_determination_id")
+  valor              String?
+  comentario         String?
+  laboratoryId       String?          @map("laboratory_id")
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+  result             Result           @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  subDetermination   SubDetermination @relation(fields: [subDeterminationId], references: [id], onDelete: Cascade)
+  laboratory         Laboratory?      @relation(fields: [laboratoryId], references: [id])
+
+  @@index([resultId])
+  @@unique([resultId, subDeterminationId])
+  @@map("LAB_sub_result")
+}
+
+model Equipment {
+  id           String       @id @default(cuid())
+  nombre       String
+  active       Boolean      @default(true)
+  laboratories Laboratory[] @relation("LAB_EquipmentToLaboratory")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+  mapperCM260s     MapperCM260[]
+  equipmentConfigs EquipmentConfig[]
+
+  @@map("LAB_equipment")
+}
+
+model MapperCM260 {
+  id                 String           @id @default(cuid())
+  codigoExterno      String?          @unique @map("codigo_externo")
+  subDeterminationId String           @map("sub_determination_id")
+  tecnica            String?
+  laboratoryId       String           @map("laboratory_id")
+  equipmentId        String           @map("equipment_id")
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+  subDetermination   SubDetermination @relation(fields: [subDeterminationId], references: [id], onDelete: Cascade)
+  laboratory         Laboratory       @relation(fields: [laboratoryId], references: [id])
+  equipment          Equipment        @relation(fields: [equipmentId], references: [id])
+
+  @@index([tecnica, equipmentId, laboratoryId])
+  @@unique([subDeterminationId, equipmentId, laboratoryId])
+  @@map("LAB_mapper_cm260")
+}
+
+model EquipmentConfig {
+  id           String     @id @default(cuid())
+  equipmentId  String     @map("equipment_id")
+  laboratoryId String     @map("laboratory_id")
+  config       Json
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  equipment    Equipment  @relation(fields: [equipmentId], references: [id])
+  laboratory   Laboratory @relation(fields: [laboratoryId], references: [id])
+
+  @@unique([equipmentId, laboratoryId])
+  @@map("LAB_equipment_config")
+}
+
+model AdditionalApplyed {
+  id                String   @id @default(cuid())
+  codigoExterno     String?  @unique @map("codigo_externo")
+  protocolId        String   @map("protocol_id")
+  additionalId      String   @map("additional_id")
+  healthInsuranceId String?  @map("health_insurance_id")
+  montoFijo         Float?   @default(0) @map("monto_fijo")
+  porcentajeSP      Float?   @default(0) @map("porcentaje_sp")
+  laboratoryId      String?  @map("laboratory_id")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  protocol        Protocol         @relation(fields: [protocolId], references: [id], onDelete: Cascade)
+  additional      Additional       @relation(fields: [additionalId], references: [id], onDelete: Cascade)
+  healthInsurance HealthInsurance? @relation(fields: [healthInsuranceId], references: [id])
+  laboratory      Laboratory?      @relation(fields: [laboratoryId], references: [id])
+
+  @@map("LAB_additional_applyed")
+}
+
+model AdditionalPricesOSConfig {
+  id                String   @id @default(cuid())
+  healthInsuranceId String   @map("health_insurance_id")
+  additionalId      String   @map("additional_id")
+  montoFijo         Float?   @default(0) @map("monto_fijo")
+  porcentajeSP      Float?   @default(0) @map("porcentaje_sp")
+  enLista           Boolean  @default(true) @map("en_lista")
+  laboratoryId      String?  @map("laboratory_id")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  healthInsurance HealthInsurance @relation(fields: [healthInsuranceId], references: [id], onDelete: Cascade)
+  additional      Additional      @relation(fields: [additionalId], references: [id], onDelete: Cascade)
+  laboratory      Laboratory?     @relation(fields: [laboratoryId], references: [id])
+
+  @@unique([healthInsuranceId, additionalId, laboratoryId])
+  @@map("LAB_additional_prices_os_config")
+}
+
+model PricesOSConfig {
+  id                String   @id @default(cuid())
+  healthInsuranceId String   @map("health_insurance_id")
+  determinationId   String   @map("determination_id")
+  cantidadNBU       Float?   @default(0) @map("cantidad_nbu")
+  montoFijo         Float?   @default(0) @map("monto_fijo")
+  precio            Float?   @default(0)
+  enLista           Boolean  @default(true) @map("en_lista")
+  laboratoryId      String?  @map("laboratory_id")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  healthInsurance HealthInsurance @relation(fields: [healthInsuranceId], references: [id], onDelete: Cascade)
+  determination   Determination   @relation(fields: [determinationId], references: [id], onDelete: Cascade)
+  laboratory      Laboratory?     @relation(fields: [laboratoryId], references: [id])
+
+  @@unique([healthInsuranceId, determinationId, laboratoryId])
+  @@map("LAB_prices_os_config")
+}
+
+model Payment {
+  id            String    @id @default(cuid())
+  codigoExterno String?   @unique @map("codigo_externo") // IDPago
+  patientId     String    @map("patient_id")
+  fecha         DateTime?
+  concepto      String?
+  importe       Float     @default(0)
+  laboratoryId  String?   @map("laboratory_id")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  patient    Patient     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  laboratory Laboratory? @relation(fields: [laboratoryId], references: [id])
+
+  @@map("LAB_payment")
+}
+
+model CurrentAccount {
+  id           String    @id @default(cuid())
+  patientId    String    @map("patient_id")
+  fecha        DateTime?
+  concepto     String?
+  debe         Float     @default(0)
+  haber        Float     @default(0)
+  saldo        Float     @default(0)
+  tipoCom      String?   @map("tipo_com") // PRO, PAG
+  idCom        String?   @map("id_com") // ID original del comprobante
+  laboratoryId String?   @map("laboratory_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  patient    Patient     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  laboratory Laboratory? @relation(fields: [laboratoryId], references: [id])
+
+  @@map("LAB_current_account")
+}
+
+model CalculatorStep {
+  id                 String   @id @default(cuid())
+  codigoExterno      String?  @unique @map("codigo_externo")
+  subDeterminationId String   @map("sub_determination_id")
+  tipoOperacion      String   @map("tipo_operacion")
+  argumentoNumerico  Float?   @default(0) @map("argumento_numerico")
+  argumentoIDSubDete String?  @map("argumento_id_sub_dete") // codigoExterno de la subdet argumento
+  laboratoryId       String?  @map("laboratory_id")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  subDetermination SubDetermination @relation(fields: [subDeterminationId], references: [id], onDelete: Cascade)
+  laboratory       Laboratory?      @relation(fields: [laboratoryId], references: [id])
+
+  @@index([subDeterminationId])
+  @@map("LAB_calculator_step")
+}
+
+enum StringFormatType {
+  TEXT
+  INTEGER
+  DECIMAL_1
+  DECIMAL_2
+}
+
+model ExternalRecord {
+  id            String      @id @default(cuid())
+  nombreTabla   String      @map("nombre_tabla")
+  datos         Json
+  codigoExterno String?     @map("codigo_externo")
+  procesado     Int         @default(0)
+  error         String?
+  intentos      Int         @default(0)
+  laboratoryId  String?     @map("laboratory_id")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  laboratory    Laboratory? @relation(fields: [laboratoryId], references: [id])
+
+  @@unique([nombreTabla, codigoExterno, laboratoryId])
+  @@map("LAB_external_record")
+}
+
+model ProtocolNote {
+  id           String      @id @default(cuid())
+  protocolId   String      @map("protocol_id")
+  userId       String      @map("user_id")
+  text         String
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  laboratoryId String?     @map("laboratory_id")
+  
+  protocol     Protocol    @relation(fields: [protocolId], references: [id], onDelete: Cascade)
+  user         User        @relation(fields: [userId], references: [id])
+  laboratory   Laboratory? @relation(fields: [laboratoryId], references: [id])
+
+  @@map("LAB_protocol_note")
+}
+
+model Tag {
+  id           String      @id @default(cuid())
+  etiqueta     String      @db.VarChar(15)
+  codigo       String      @db.VarChar(15)
+  nombre       String      @db.VarChar(50)
+  laboratoryId String?     @map("laboratory_id")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  laboratory   Laboratory? @relation(fields: [laboratoryId], references: [id])
+  sections     Section[]
+
+  @@unique([codigo, laboratoryId])
+  @@map("LAB_tag")
+}
+
+model Worksheet {
+  id           String      @id @default(cuid())
+  codigo       String      @db.VarChar(15)
+  nombre       String      @db.VarChar(50)
+  laboratoryId String?     @map("laboratory_id")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  laboratory   Laboratory? @relation(fields: [laboratoryId], references: [id])
+  sections     Section[]
+
+  @@unique([codigo, laboratoryId])
+  @@map("LAB_worksheet")
+}
+
+model ManlabOrder {
+  id               String    @id @default(cuid())
+  barcode          String?   @map("barcode")
+  rotulo           String?   @map("rotulo")
+  cliente          Int       @default(0)
+  codPrestacion    String?   @map("cod_prestacion")
+  iva              String?   @default("O") @map("iva")
+  comentario       String?   @map("comentario")
+  diuresis         Float     @default(0)
+  tipoDocumento    String?   @map("tipo_documento")
+  numeroDocumento  String?   @map("numero_documento")
+  resultId         String    @unique @map("result_id")
+  result           Result    @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  enviado          Boolean   @default(false)
+  fechaEnviado     DateTime? @map("fecha_enviado")
+  manlabExportId   String?   @map("manlab_export_id")
+  manlabExport     ManlabExport? @relation(fields: [manlabExportId], references: [id])
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  @@map("LAB_manlab_order")
+}
+
+model ManlabExport {
+  id               String    @id @default(cuid())
+  filename         String
+  cliente          Int
+  count            Int
+  userId           String    @map("user_id")
+  resultIds        String[]  @default([])
+  status           String    @default("PENDING")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @default(now()) @updatedAt @map("updated_at")
+  orders           ManlabOrder[]
+
+  @@map("LAB_manlab_export")
+}
+
+model ManlabSetting {
+  id           String      @id @default(cuid())
+  key          String      @unique
+  value        String      @db.Text
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  @@map("LAB_manlab_setting")
+}

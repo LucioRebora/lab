@@ -1,0 +1,40 @@
+﻿                                        </td>
+                                                     "w-1.5 h-1.5 rounded-full animate-pulse",
+                                                     protocol.status === "NEW" ? "bg-blue-500" : 
+                                                     protocol.status === "LOADED" ? "bg-orange-500" : 
+                                                     protocol.status === "VALIDATED" ? "bg-emerald-500" : 
+                                                     protocol.status === "ERROR" ? "bg-rose-500" : 
+                                                     protocol.status === "IN_PROGRESS" ? "bg-amber-500" : 
+                                                     protocol.status === "SENT" ? "bg-zinc-500" : 
+                                                     protocol.status === "PUBLISHED" ? "bg-purple-500" : 
+                                                     protocol.status === "SIGNED" ? "bg-cyan-500" : "bg-zinc-400"
+                                                 )} />
+                                                 <span className={cn(
+                                                     "text-[10px] font-black uppercase tracking-widest",
+                                                     protocol.status === "NEW" ? "text-blue-500" : 
+                                                     protocol.status === "LOADED" ? "text-orange-500" : 
+                                                     protocol.status === "VALIDATED" ? "text-emerald-500" : 
+                                                     protocol.status === "ERROR" ? "text-rose-500" : 
+                                                     protocol.status === "IN_PROGRESS" ? "text-amber-500" : 
+                                                     protocol.status === "SENT" ? "text-zinc-500" : 
+                                                     protocol.status === "PUBLISHED" ? "text-purple-500" : 
+                                                     protocol.status === "SIGNED" ? "text-cyan-500" : "text-zinc-400"
+                                                 )}>
+                                                     {(() => {
+                                                         switch(protocol.status) {
+                                                             case 'NEW': return 'Nuevo';
+                                                             case 'LOADED': return 'Cargado';
+                                                             case 'VALIDATED': return 'Validado';
+                                                             case 'ERROR': return 'Error';
+                                                             case 'IN_PROGRESS': return 'En Proceso';
+                                                             case 'SENT': return 'Enviado';
+                                                             case 'PUBLISHED': return 'Publicado';
+                                                             case 'SIGNED': return 'Firmado';
+                                                             default: return protocol.status;
+                                                         }
+                                                     })()}
+                                                 </span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className="text-xs font-bold text-zinc-500 font-mono">

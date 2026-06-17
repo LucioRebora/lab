@@ -1,0 +1,196 @@
+codigoexterno,Nombre
+2,Radioinmunoensayo
+3,Inmunorradiométrico
+6,Contador hematológico - Microscopía
+7,Electroforesis
+8,Autoanalizador A15 - Enzimático ( GOD - PAD )
+10,Westergreen
+11,Enzimático
+12,Coloración de Papanicolaou
+13,Fotometría de llama
+14,Autoanalizador A15 - Cinético en UV a 30 ºC
+15,Electrodo específico
+16,Manual
+17,ELISA
+18,Amilo - Iodométrico
+19,Enzimoinmunoensayo
+20,Autoanalizador A15 - Cinético de Jaffé
+21,Inmunodifusión radial
+22,Cultivo
+23,Azul de Metiltimol
+24,Autoanalizador A15 - Colorimétrico
+25,Turbidimétrico
+26,Chavrol - Charonnet
+52,Autoanalizador A15 - Ureasa/Glutamato dehidrogenasa
+53,Autoanalizador A15 - Cinético en UV a 37 ºC
+54,Hemaglutinación
+55,Aglutinación de partículas de latex
+56,Hemaglutinación indirecta
+58,Pisano
+59,Autoanalizador A15 - Enzimático ( CHOD - POD )
+60,Aglutinación directa
+61,Intradermoreacción
+62,Ziehl Nielsen
+63,Cromatografía - Espectrometría
+64,Turbidimétrico cinético UV
+65,Coloración de Giemsa
+66,Coloración Hematoxilina-Shorr
+67,Precipitación con lecitina
+68,Campbell
+69,Bencidina
+70,Azul de Nitratetrozolio
+71,Enzimático - Precipitación
+72,Firschain y Schill
+73,Electroforesis - Difusión radial
+74,Inmunofluorescencia
+75,Cromatografía líquida (HPLC)
+76,Inmunológico en UV (Cualitativo)
+77,Actividad hemolítica al 50 % (Grimberg)
+78,EIA en microplaca
+79,Doble difusión
+80,Inmunocromatografía
+81,Macroaglutinación con atígeno T.R.
+82,Aglutinación pasiva
+83,Inmunodifusión doble bidimensional
+84,Citometría de flujo
+85,Autoanalizador A15 - Inmunoturbidimétrico
+86,Espectofotometría
+87,Quimioluminiscencia
+88,Electrodo selectivo para iones
+89,Polarización fluroscente - AXSYM-
+90,MEIA
+91,Radioensayo competitivo de unión al receptor
+92,Winzler modificado
+93,Coagulación
+94,Fluorométrico
+95,Micro-Strut
+96,Contador hematológico Counter 19 - Microscopía
+97,Pruebas directas con anticuerpo monoclonal e inversas
+98,Prueba directa con anticuerpo monoclonal y PAI para negativos.
+99,Enzimático - Colorimétrico
+100,Inmunológico - Monoclonal - Específico
+101,RT- PCR cuantitativa
+102,Inmunocromatográfico - Específico
+103,Absorción atómica
+104,Competición proteica
+105,Inmunológico - Starten 25°c
+106,EIA
+107,Autoanalizador A15 - Colorimétrico - Biuret
+108,DELFIA-Fluorométrico
+109,Agarosa de alta resolución
+110,FPIA
+111,Kivirikko - colorimétrico
+112,Autoanalizador A15 - TG - Enzimático
+113,Autoanalizador A15 - Enzimático ( Uricasa - POD )
+114,Autoanalizador A15 - Enzimático
+115,Soporte de Acetato de celulosa
+116,Inmunoensayo turbidimétrico
+117,Autoanalizador A15 - Inmunoturbidimétrico de alta sensibilidad.
+118,Electroquimioluminiscencia
+119,APTT modificado
+120,PCR-FRLP
+121,Autoanalizador A15 - Latex - turbidimétrico de alta sensibilidad.
+122,Autoanalizador A15 - Enzimático directo
+123,Nefelometría
+124,MDRD4
+125,Autoanalizador A15 - Colorimétrico - Turbidimétrico
+126,Espectrofotometría
+127,Cinético
+128,Colorimétrico
+129,Precipitación con Lectina
+130,Inmunoturbidimetría
+131,Electroforesis capilar
+132,Cinético-UV
+133,Cinético-colorimétrico
+134,Centrifugación-flotación según Willis
+135,Ce
+136,Contador hematológico Counter 19
+137,Método de concentración bifasica según Ritchie
+138,C
+139,Cintilla-Microscopía
+140,Cromogénico
+141,Técnica coagulométrica
+142,Coagulométrico automatizado
+143,Coagulométrico
+144,ELISA de Captura
+146,Aglutinación de partículas
+147,Inmunofluorescencia indirecta
+148,Aglutinación de partículas de látex sensibilizadas
+149,Radioinmunoanálisis
+150,Inmunofijación en gel de agarosa
+151,Real Time PCR (Light Cycler 2.0-Roche)
+152,Metrolab CM 260i.
+153,Metrolab CM 260i - Enzimático.
+155,Metrolab CM 260i - Cinético.
+156,"Inmunofluorescencia indirecta, Sustrato Crithidia Luciliae. Valor de corte: dil 1/20."
+157,"Inmunofluorescencia indirecta, sustrato céulas HEp2. Valor de corte. Dil 1/80."
+158,Enzimoinmunoensayo. Equipo ELISA INOVA 3ra generación. Quanta lite CCP IgG.
+159,Inmunocromatografía cualitativo
+161,Fluorescencia óptica
+162,OPTI-medical: Fluorescencia óptica
+163,Cromatografía Liquida
+164,"Cultivo para Streptococcus beta hemolìtico del grupo ""B"""
+165,IPP
+166,Inmunologico UV - Metrolab CM 200.
+167,Esteatocrito acido
+168,Western Blot
+169,UCH50
+170,PP-PEG
+171,Ensayo funcional
+172,Cinético (Sustrato butiril-colinesterasa)
+173,PCR - SSP
+174,PCR - SSO por luminex.
+175,Moorehead modificado
+176,APS
+177,ELFA
+178,Ensayo de unión de radioligandos.
+179,COL
+180,Real Time PCR
+181,EA en gel de agarosa.
+182,PCR real time
+183,Test de von Kaulla
+184,Difusión con discos en medio sólido.
+185,Varios
+186,QLM + Detección de Ag p24
+187,Inmunoensayo Enzimático
+188,FC
+189,Según Manual OMS 2010
+190,Espectrofotometría según ELLMAN y COLS (hidrólisis de acetilcolina)
+191,Quimico
+192,Inmunoensayo
+193,Inmunoquímica
+194,Microscopia
+195,IFI Sustrato antigénico Células Hep-2
+196,IFI Células Hep-2
+197," EA en GA"
+198,QML (Deteciión de Ac + p24)
+199,Inmunotyping
+200,Coagulometrico
+201,Inmunoenzimático (ELFA). Minividas
+202,PCR-SSO por Luminex
+203,PCR- Secuencia
+204,Enzimático colorimétrico de Knapple
+205,Cromatografia Gaseosa / Espectrometria de Masa
+206,Coloración-Microscopía
+207," Metodo de Santoiani"
+208,Precipitacion
+209,PCR en tiempo real. (HRM)
+210,Fluoroenzimoinmunoensayo.
+211,EFM
+212,NGS
+213,Wainberg Florencia N.
+214,PCR + Secuenciacion
+215,Inmunocromatografia por Fluorescencia.
+216,Inmunoensayo por Fluorescencia (FIA).
+217,Microgases - AADEE
+218,Directo y cultivo
+219,Microscopia/Cultivo
+220,ITD
+221,Coagulometro Coatrom M.
+222,Coagulometro Coatron M
+224,Metrolab CM260i.
+225,CM260i - Potenciometria Directa.
+226,Microscopia de campo oscuro (MCO).
+227," ESI-MS/MS - Ionización por electrospray con detector MS/MS"
+228,Biología Molecular
+229,Cromatografía líquida-espectrometría de masas en tándem

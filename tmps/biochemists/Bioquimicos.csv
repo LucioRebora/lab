@@ -1,0 +1,9 @@
+IDBioquimico,Apellido,Nombre,Tratamiento,Codigo,Direccion,Ciudad,Provincia,CodigoPostal,Telefono,Celular,Notas,ClaveParaFirmar,ArchivoDeFirma
+1,Brandner,Judith,Bioq.,968,Bolívar 1002,Gualeguaychú,Entre Ríos,2820,3446-434574,,,,
+2,Lambruschini,Renata,Bioq.,981,Bolívar 1002,Gualeguaychú,Entre Ríos,2820,3446-434574,,,<CA@@@=>,
+3,Tommasi,Emiliano,Bioq.,902,Bolívar 1002,Gualeguaychú,Entre Ríos,2820,3446-434574,3446-404056,,;>C?,
+4,Perez Duarte,Ivan,Bioq.,1100,,Gualeguaychú,Entre Ríos,2820,3446 560282,,,=>@@:AC>,
+5,Britez,Camila,Tec.,,,Gualeguaychú,Entre Ríos,2820,,,,,
+6,Molina,Maria Victoria,Tec.,,,Gualeguaychú,Entre Ríos,2820,,,,,
+7,Paredes,Jesica,Sec.,,,Gualeguaychú,Entre Ríos,2820,,,,,
+8,Terreni,María Agustina,Bioq.,1130,,Gualeguaychú,Entre Ríos,2820,,3446-621414,,,
